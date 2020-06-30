@@ -7,14 +7,25 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.Toast;
 
+import com.parse.FindCallback;
 import com.parse.LogOutCallback;
 import com.parse.ParseException;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.shashank.sony.fancytoastlib.FancyToast;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class SocialMediaActivity extends AppCompatActivity {
+
+    private ListView listView;
+    private ArrayList<String> arrayList;
+    private ArrayAdapter arrayAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,6 +34,24 @@ public class SocialMediaActivity extends AppCompatActivity {
 
         FancyToast.makeText(SocialMediaActivity.this, "Welcome"+ParseUser.getCurrentUser().getUsername(),
                 Toast.LENGTH_SHORT,FancyToast.SUCCESS,false).show();
+
+        listView=findViewById(R.id.listView);
+        arrayList=new ArrayList<>();
+        arrayAdapter=new ArrayAdapter(SocialMediaActivity.this,android.R.layout.simple_list_item_1,arrayList);
+
+        ParseQuery<ParseUser> parseQuery = ParseUser.getQuery();
+        parseQuery.whereNotEqualTo("username",ParseUser.getCurrentUser().getUsername());
+        parseQuery.findInBackground(new FindCallback<ParseUser>() {
+            @Override
+            public void done(List<ParseUser> parseUsers, ParseException e) {
+                if(parseUsers.size()>0 && e==null){
+                    for(ParseUser parseUser:parseUsers){
+                        arrayList.add(parseUser.getUsername());
+                    }
+                    listView.setAdapter(arrayAdapter);
+                }
+            }
+        });
     }
 
     @Override
