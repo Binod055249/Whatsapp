@@ -9,6 +9,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -24,7 +26,7 @@ import com.shashank.sony.fancytoastlib.FancyToast;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SocialMediaActivity extends AppCompatActivity {
+public class SocialMediaActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
     private ListView listView;
     private ArrayList<String> arrayList;
@@ -42,6 +44,9 @@ public class SocialMediaActivity extends AppCompatActivity {
         listView=findViewById(R.id.listView);
         arrayList=new ArrayList<>();
         arrayAdapter=new ArrayAdapter(SocialMediaActivity.this,android.R.layout.simple_list_item_1,arrayList);
+
+        listView.setOnItemClickListener(this);
+
          swipeRefreshLayout=findViewById(R.id.swipeRefreshLatout);
 
         try {
@@ -125,5 +130,12 @@ public class SocialMediaActivity extends AppCompatActivity {
 
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Intent intent=new Intent(SocialMediaActivity.this,ChatActivity.class);
+        intent.putExtra("username",arrayList.get(position));
+        startActivity(intent);
     }
 }
